@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Korea Quest: Discover the Soul of Korea</title>
+    <style>
+        /* ===== 2. CSS DESIGN SYSTEM ===== */
+        :root {
+            --sky: #78D8F5;
+            --ocean: #3B82F6;
+            --pink: #FFB7D5;
+            --cream: #FFF8E8;
+            --sun: #FFD166;
+            --mint: #83E6B1;
+            --navy: #24345C;
+            --coral: #FF8866
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        body {
+            margin: 0;
+            font-family: "Trebuchet MS", Verdana, sans-serif;
+            color: var(--navy);
+            background: linear-gradient(#78D8F5, #d9f4ff 55%, #FFF8E8);
+            min-height: 100vh;
+            line-height: 1.5
+        }
+
+        #app {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 12px;
+            position: relative
+        }
+
+        h1,
+        h2 {
+            margin: .3em 0;
+            outline: none
+        }
+
+        h1 {
+            font-size: clamp(2rem, 7vw, 3.4rem);
+            text-shadow: 3px 3px 0 #fff
+        }
+
+        button {
+            font: inherit;
+            cursor: pointer;
+            border: 3px solid var(--navy);
+            background: #fff;
+            color: var(--navy);
+            border-radius: 14px;
+            padding: 9px 16px;
+            margin: 4px;
+            box-shadow: 0 4px 0 var(--navy);
+            transition: transform .12s
+        }
+
+        button:hover:not(:disabled) {
+            transform: translateY(-2px)
+        }
+
+        button:active:not(:disabled) {
+            transform: translateY(2px);
+            box-shadow: 0 1px 0 var(--navy)
+        }
+
+        button:disabled {
+            opacity: .7;
+            cursor: default
+        }
+
+        :focus-visible {
+            outline: 4px solid var(--coral);
+            outline-offset: 2px
+        }
+
+        .pri {
+            background: var(--sun);
+            font-weight: bold;
+            font-size: 1.1rem
+        }
+
+        .card {
+            background: var(--cream);
+            border: 4px solid var(--navy);
+            border-radius: 24px;
+            padding: 18px;
+            margin: 10px 0;
+            box-shadow: 0 8px 0 rgba(36, 52, 92, .25);
+            animation: pop .35s
+        }
+
+        .bar {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center
+        }
+
+        .center {
+            text-align: center
+        }
+
+        .hero {
+            font-size: 4rem;
+            background: var(--c, #FFB7D5);
+            border-radius: 50%;
+            width: 100px;
+            height: 100px;
+            display: grid;
+            place-items: center;
+            margin: auto;
+            border: 4px solid var(--navy)
+        }
+
+        .stats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+            margin: 6px 0
+        }
+
+        .stats span,
+        .meta li {
+            background: #fff;
+            border: 2px solid var(--navy);
+            border-radius: 999px;
+            padding: 2px 12px;
+            font-size: .9rem
+        }
+
+        .meta {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 0;
+            justify-content: center
+        }
+
+        .guide {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            background: #fff;
+            border: 3px dashed var(--ocean);
+            border-radius: 18px;
+            padding: 6px 12px
+        }
+
+        .guide span {
+            font-size: 2rem
+        }
+
+        .guide p {
+            margin: 0
+        }
+
+        .scene {
+            width: 100%;
+            display: block;
+            border-radius: 20px
+        }
+
+        .map {
+            width: 100%;
+            max-height: 78vh;
+            background: #bfe9ff;
+            border: 4px solid var(--navy);
+            border-radius: 24px
+        }
+
+        .mk {
+            cursor: pointer
+        }
+
+        .mk .ic {
+            font-size: 18px;
+            text-anchor: middle
+        }
+
+        .mk .lb {
+            font-size: 13px;
+            font-weight: bold;
+            fill: var(--navy);
+            paint-order: stroke;
+            stroke: #fff;
+            stroke-width: 4px
+        }
+
+        .mk.available circle {
+            animation: pulse 1.6s infinite;
+            stroke: var(--navy);
+            stroke-width: 3
+        }
+
+        .mk.locked {
+            opacity: .65
+        }
+
+        .mk.completed circle {
+            stroke: #1a9c5b;
+            stroke-width: 5
+        }
+
+        .mk.mastered circle {
+            stroke: #e6a700;
+            stroke-width: 6
+        }
+
+        .mk:hover circle,
+        .mk:focus-visible circle {
+            stroke: var(--coral);
+            stroke-width: 5
+        }
+
+        .prog {
+            height: 14px;
+            background: #fff;
+            border: 2px solid var(--navy);
+            border-radius: 9px;
+            overflow: hidden
+        }
+
+        .prog i {
+            display: block;
+            height: 100%;
+            background: var(--mint);
+            transition: width .4s
+        }
+
+        .opts {
+            display: grid;
+            gap: 8px;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr))
+        }
+
+        .opt {
+            width: 100%;
+            text-align: left;
+            margin: 2px 0;
+            background: #fff
+        }
+
+        .opt.sel {
+            background: var(--sky)
+        }
+
+        .opt.right {
+            background: var(--mint)
+        }
+
+        .opt.right::before {
+            content: "✓ "
+        }
+
+        .opt.wrong {
+            background: #ffc9bd
+        }
+
+        .opt.wrong::before {
+            content: "✗ "
+        }
+
+        .mt {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px
+        }
+
+        input[type=text] {
+            font: inherit;
+            padding: 10px;
+            border: 3px solid var(--navy);
+            border-radius: 12px;
+            width: 100%
+        }
+
+        .fb {
+            border-radius: 14px;
+            padding: 8px 14px;
+            margin: 10px 0;
+            border: 3px solid var(--navy)
+        }
+
+        .fb.ok {
+            background: #d6f8e6
+        }
+
+        .fb.no {
+            background: #ffe3d9
+        }
+
+        .fb p {
+            margin: .3em 0
+        }
+
+        .hint,
+        .dim {
+            color: #51608a
+        }
+
+        .seq {
+            padding-left: 24px
+        }
+
+        .lock {
+            background: #fff;
+            padding: 8px;
+            border-radius: 12px
+        }
+
+        .grid {
+            display: grid;
+            gap: 10px;
+            grid-template-columns: repeat(auto-fill, minmax(210px, 1fr))
+        }
+
+        .item {
+            background: #fff;
+            border: 3px solid var(--navy);
+            border-radius: 16px;
+            padding: 10px;
+            text-align: center
+        }
+
+        .item.off {
+            opacity: .55;
+            filter: grayscale(1)
+        }
+
+        .item b {
+            display: block
+        }
+
+        .item .e {
+            font-size: 2.4rem
+        }
+
+        .modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(36, 52, 92, .6);
+            display: grid;
+            place-items: center;
+            z-index: 9;
+            padding: 12px
+        }
+
+        .modal .card {
+            max-width: 420px;
+            text-align: center
+        }
+
+        .cf {
+            position: fixed;
+            top: -30px;
+            font-size: 1.6rem;
+            animation: fall 3s linear forwards;
+            pointer-events: none;
+            z-index: 5
+        }
+
+        .cloud,
+        .petal {
+            position: absolute;
+            font-size: 2.4rem;
+            animation: drift 25s linear infinite;
+            pointer-events: none
+        }
+
+        .petal {
+            font-size: 1.2rem;
+            animation: fall 9s linear infinite
+        }
+
+        @keyframes pop {
+            from {
+                transform: scale(.94);
+                opacity: 0
+            }
+        }
+
+        @keyframes pulse {
+            50% {
+                r: 21
+            }
+        }
+
+        @keyframes fall {
+            to {
+                transform: translateY(110vh) rotate(540deg)
+            }
+        }
+
+        @keyframes drift {
+            from {
+                transform: translateX(-80px)
+            }
+
+            to {
+                transform: translateX(110vw)
+            }
+        }
+
+        @media(max-width:560px) {
+            .mt {
+                grid-template-columns: 1fr
+            }
+
+            .hero {
+                width: 80px;
+                height: 80px;
+                font-size: 3rem
+            }
+        }
+
+        @media(prefers-reduced-motion:reduce) {
+            * {
+                animation: none !important;
+                transition: none !important
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app"></div>
+    <script>
+        'use strict';
+        /* ===== 3. STATIC GAME CONTENT ===== */
+        // Challenge builders: Q quiz/observation, TF true-false, S short answer, M matching, O ordering
+        const Q = (q, o, a, e, h) => ({ t: 'quiz', q, o, a, e, h });
+        const TF = (q, a, e, h) => ({ t: 'tf', q, a, e, h });
+        const S_ = (q, acc, e, h) => ({ t: 'short', q, acc, e, h });
+        const M = (q, p, e) => ({ t: 'match', q, p, e });
+        const O = (q, items, e, h) => ({ t: 'order', q, items, e, h });
+        const REGIONS = [
+            {
+                id: 'seoul', name: 'Seoul', theme: 'The Royal Capital', c: '#FFB7D5', i: '🏯', x: 130, y: 110, req: [],
+                story: "Seoul has been Korea's capital for over 600 years. When the Joseon dynasty moved its capital there in 1394, Gyeongbokgung Palace became its royal heart, and costumed guards still perform ceremonies at its gate. Seoul is also where King Sejong's scholars introduced Hangul, the Korean alphabet, and where K-pop and Korean cinema reach the world. Old palaces and glass towers stand side by side.",
+                facts: ["Gyeongbokgung Palace was completed in 1395.", "Hangul was introduced in 1446."], did: "Many Hangul consonants were designed to reflect the shape of the mouth or tongue when making the sound.",
+                art: ["Hunminjeongeum Scroll", "📜", "Seoul, Joseon (1446)", "The document that introduced Hangul, a writing system made so ordinary people could learn to read."],
+                ch: [Q("Which palace, completed in 1395, served as the main royal palace of the Joseon dynasty?", ["Changdeokgung", "Gyeongbokgung", "Deoksugung", "Gyeonghuigung"], 1, "Gyeongbokgung was the main palace of Joseon, built in 1395.", "Its name is often translated as 'Palace Greatly Blessed by Heaven'."),
+                S_("Which king oversaw the creation of Hangul in the 15th century?", ["sejong", "king sejong", "sejong the great"], "King Sejong and his scholars introduced Hangul in 1446.", "His statue sits in Gwanghwamun Square."),
+                TF("Hangul was created in the 20th century.", false, "False. Hangul was introduced in 1446 during the Joseon dynasty."),
+                M("Match each Seoul term to its meaning.", [["Hanbok", "Traditional Korean clothing"], ["Hangul", "The Korean alphabet"], ["Gwanghwamun", "Main gate of Gyeongbokgung"], ["Hallyu", "The 'Korean Wave' of pop culture"]], "Each term links to Seoul's royal past or its modern culture.")]
+            },
+            {
+                id: 'busan', name: 'Busan', theme: 'The Coastal City', c: '#78D8F5', i: '🌊', x: 270, y: 385, req: ['seoul'],
+                story: "Busan is Korea's second-largest city and its biggest port. Hills tumble down to the sea, giving the city beaches, fishing harbors and colorful neighborhoods. At Jagalchi Market, vendors sell fresh seafood from nearby waters. Gamcheon Culture Village began as a hillside settlement for refugees during the Korean War, and artists and residents later brightened it with painted houses and murals.",
+                facts: ["Busan is South Korea's largest port.", "Gamcheon's houses climb a steep hillside in tiers."], did: "Jagalchi is widely known as Korea's largest seafood market.",
+                art: ["Harbor Seafood Basket", "🐟", "Busan, Jagalchi Market", "A symbol of the fishing trade that has fed the city for generations."],
+                ch: [Q("What is Jagalchi Market best known for?", ["Silk fabrics", "Fresh seafood", "Ceramics", "Tea leaves"], 1, "Jagalchi is Korea's famous seafood market on Busan's waterfront.", "Think of the harbor."),
+                Q("Clue: colorful houses stacked on a steep hillside, with murals and narrow stairways. Which Busan place matches?", ["Gamcheon Culture Village", "Haeundae Beach", "Jagalchi Market", "Taejongdae Park"], 0, "Gamcheon's pastel houses and art installations make it one of Busan's best-known sights."),
+                S_("Dwaeji gukbap, a classic Busan soup, is made with which meat?", ["pork", "pig"], "Dwaeji gukbap is a pork and rice soup popular in Busan.", "'Dwaeji' means pig."),
+                TF("Busan is South Korea's largest port city.", true, "True. Busan's harbor handles a huge share of the country's shipping.")]
+            },
+            {
+                id: 'gyeongju', name: 'Gyeongju', theme: 'The Ancient Kingdom', c: '#FFD166', i: '👑', x: 285, y: 330, req: ['busan'],
+                story: "For almost a thousand years, Gyeongju was the capital of the Silla kingdom, which unified most of the Korean peninsula in the 7th century. Today the city is often called a museum without walls. Grassy royal tombs dot the town, while nearby Bulguksa Temple and Seokguram Grotto showcase Buddhist art. Both were named UNESCO World Heritage sites in 1995.",
+                facts: ["Silla's rule lasted until 935.", "Silla's artisans made famous gold crowns."], did: "Silla tombs have yielded gold crowns, jewelry and pottery that tell us about royal life.",
+                art: ["Silla Gold Crown", "👑", "Gyeongju, Silla kingdom", "Royal crowns with tree-and-antler shapes were found in Silla tombs."],
+                ch: [Q("Which kingdom had Gyeongju as its capital?", ["Baekje", "Goguryeo", "Silla", "Balhae"], 2, "Gyeongju was the capital of Silla.", "It later unified most of the peninsula."),
+                TF("Bulguksa Temple and Seokguram Grotto are UNESCO World Heritage sites.", true, "True. They were inscribed together in 1995."),
+                Q("Seokguram Grotto is best known for which centerpiece?", ["A royal throne", "A bronze bell", "A seated Buddha statue", "A fortress gate"], 2, "A serene seated Buddha sits in the granite grotto above Gyeongju.", "It is a Buddhist shrine."),
+                O("Place these events in order, from earliest to latest.", ["Silla is traditionally founded (57 BCE)", "Silla defeats Goguryeo (668)", "Bulguksa construction begins (751)", "Silla surrenders to Goryeo (935)"], "The kingdom's story runs from legendary founding to unification, golden age and end.", "Start with the legendary founding.")]
+            },
+            {
+                id: 'jeonju', name: 'Jeonju', theme: 'The Food Heritage', c: '#83E6B1', i: '🍲', x: 130, y: 285, req: ['suwon'],
+                story: "Jeonju is famous for its food and its hanok, traditional Korean houses with curved tile roofs. Jeonju Hanok Village holds hundreds of these homes, many built in the early 20th century. The city's best-known dish is bibimbap, a bowl of rice topped with vegetables, meat or egg and chili paste, mixed together before eating. In 2012 UNESCO named Jeonju a Creative City of Gastronomy.",
+                facts: ["Jeonju was named a UNESCO City of Gastronomy in 2012.", "Hanok blend wood, clay and tile."], did: "Many hanok are warmed by ondol, a heating system under the floor.",
+                art: ["Bibimbap Bowl", "🍲", "Jeonju, North Jeolla", "A bowl that celebrates balance, color and regional ingredients."],
+                ch: [S_("The name 'bibimbap' means 'mixed ___'. Fill in the blank.", ["rice", "mixed rice"], "Bibimbap means mixed rice.", "'Bap' means cooked rice or a meal."),
+                Q("What is a hanok?", ["A rice wine", "A fortress wall", "A traditional Korean house", "A folk mask"], 2, "Hanok are traditional homes, often with tiled roofs and wooden frames."),
+                TF("Many hanok are heated by ondol, a system that warms the floor from below.", true, "True. Ondol spreads heat through the floor, a clever traditional solution for cold winters."),
+                M("Match each item to its description.", [["Hanok", "Traditional Korean house"], ["Ondol", "Underfloor heating"], ["Gochujang", "Fermented red chili paste"], ["Hanji", "Paper made from mulberry bark"]], "Together these show how food and home life are intertwined.")]
+            },
+            {
+                id: 'jeju', name: 'Jeju Island', theme: 'The Island of Legends', c: '#a7e8ff', i: '🗿', x: 110, y: 500, req: ['busan'],
+                story: "Jeju is a volcanic island south of the mainland, formed by ancient eruptions. Its centerpiece is Hallasan, a volcano rising nearly 2,000 meters. Islanders developed their own customs, including the haenyeo, women who dive for seafood without breathing equipment. Stone guardians called dol hareubang stand at village entrances, and Jeju folklore tells of giants and goddesses who shaped the land.",
+                facts: ["Hallasan is about 1,950 meters tall.", "Jeju has its own dialect and customs."], did: "Haenyeo culture was added to UNESCO's Intangible Cultural Heritage list in 2016.",
+                art: ["Dol Hareubang", "🗿", "Jeju Island", "A stone guardian carved from volcanic rock."],
+                ch: [Q("What is special about haenyeo divers?", ["They dive without breathing equipment", "They fish only at night", "They are trained by the navy", "They travel by submarine"], 0, "Haenyeo free-dive for seafood using skill and breath control.", "'Haenyeo' means sea women."),
+                Q("Dol hareubang statues are traditionally carved from what?", ["Jade", "Wood", "Marble", "Volcanic rock"], 3, "Jeju's volcanic stone is the natural material for these guardian figures."),
+                S_("Name the volcano at the center of Jeju Island.", ["hallasan", "mount halla", "mt halla", "halla"], "Hallasan is Jeju's volcano and South Korea's highest peak.", "It starts with 'H'."),
+                TF("Haenyeo culture is recognized by UNESCO.", true, "True. It was inscribed in 2016.")]
+            },
+            {
+                id: 'andong', name: 'Andong', theme: 'The Living Traditions', c: '#FF8866', i: '🎭', x: 235, y: 215, req: ['gyeongju'],
+                story: "Andong preserves some of Korea's most vivid living traditions. Nearby Hahoe Village, home to the Pungsan Ryu clan for centuries, sits inside a bend of the Nakdong River and became a UNESCO site in 2010. Andong also hosts a famous mask dance festival. In talchum, dancers in expressive masks use humor to poke fun at people with power. Local Confucian academies reflect values taught in Joseon society.",
+                facts: ["Hahoe Village was listed by UNESCO in 2010.", "Talchum combines dance, music and comedy."], did: "'Hahoe' is often explained as meaning 'river winding around'.",
+                art: ["Hahoe Mask", "🎭", "Andong, Hahoe Village", "A carved mask used in satirical dances."],
+                ch: [Q("What natural feature curves around Hahoe Village?", ["Han River", "Nakdong River", "A lava canyon", "The ocean tide"], 1, "The Nakdong River winds around the village in an S shape."),
+                TF("Talchum mask dances often used humor to criticize people with power.", true, "True. Performers could laugh at privileged figures while hidden by masks."),
+                S_("Which philosophy, taught in academies called seowon, shaped Joseon society?", ["confucianism", "confucian", "neo-confucianism", "neoconfucianism", "confucius"], "Confucian ideals shaped education and family customs.", "It is named after Confucius."),
+                M("Match each item to its meaning.", [["Talchum", "Mask dance drama"], ["Seowon", "Confucian academy"], ["Hahoe", "UNESCO village in a river bend"], ["Jjimdak", "Braised chicken dish of Andong"]], "These terms show Andong's blend of art, learning and daily life.")]
+            },
+            {
+                id: 'gangneung', name: 'Gangneung', theme: 'The Festival Coast', c: '#b7a5ff', i: '🌿', x: 278, y: 120, req: ['suwon'],
+                story: "Gangneung sits on Korea's east coast, where mountains meet the East Sea. Each year, around the fifth day of the fifth lunar month, it holds Gangneung Danoje, a festival with shamanic rituals, mask drama, wrestling and swings. UNESCO recognized it in 2005 as a Masterpiece of the Oral and Intangible Heritage of Humanity. The region also offers pine-fringed beaches and a lively coffee culture.",
+                facts: ["Danoje falls on the fifth day of the fifth lunar month.", "UNESCO recognized Danoje in 2005."], did: "Traditionally, people washed their hair with water infused with changpo (sweet flag) during Dano.",
+                art: ["Changpo Hairpin", "🌿", "Gangneung, Danoje", "A hairpin tied to the custom of changpo, a plant linked to health."],
+                ch: [Q("Danoje is celebrated around which date?", ["First day of lunar new year", "Fifth day of the fifth lunar month", "Harvest full moon", "Last day of winter"], 1, "Dano means the fifth day of the fifth lunar month."),
+                TF("Gangneung Danoje was recognized by UNESCO in 2005.", true, "True. It was proclaimed in 2005."),
+                Q("Clue: a Dano custom involved washing hair in water infused with a fragrant plant. Which one?", ["Ginseng", "Changpo (sweet flag)", "Bamboo", "Pine needles"], 1, "Changpo water was used for health and good luck."),
+                S_("Gangneung faces which sea? Hint: Koreans call it the ___ Sea.", ["east sea", "east", "sea of japan"], "Gangneung is on the east coast, facing the East Sea.", "Think of the compass.")]
+            },
+            {
+                id: 'suwon', name: 'Suwon', theme: 'The Fortress City', c: '#ffa7a7', i: '🏰', x: 140, y: 155, req: ['seoul'],
+                story: "Suwon is known for Hwaseong, a fortress built from 1794 to 1796 by King Jeongjo of Joseon. Its walls stretch about 5.7 kilometers and include gates, watchtowers and lookout platforms designed for defense. Builders used new engineering ideas, including cranes. UNESCO listed Hwaseong as a World Heritage site in 1997, and detailed construction records helped restore it after damage in the Korean War.",
+                facts: ["Hwaseong's walls are about 5.7 km long.", "Builders recorded the project in great detail."], did: "Hwaseong's construction records are credited with making its restoration possible.",
+                art: ["Hwaseong Gate Model", "🏰", "Suwon, Hwaseong Fortress", "A tiny gate representing the planned city wall."],
+                ch: [Q("Which Joseon king built Hwaseong Fortress?", ["Sejong", "Jeongjo", "Taejo", "Gojong"], 1, "King Jeongjo commissioned Hwaseong in the 1790s."),
+                S_("In which year was Hwaseong named a UNESCO World Heritage site?", ["1997"], "UNESCO inscribed Hwaseong in 1997.", "Late 1990s."),
+                TF("Detailed construction records helped restore Hwaseong after the Korean War.", true, "True. The records guided the restoration."),
+                M("Match each Hwaseong feature to its role.", [["Paldalmun", "South gate"], ["Gongsimdon", "Spiral watchtower"], ["Haenggung", "Temporary palace for the king"], ["Seojangdae", "Western command post"]], "Each feature served a clear defensive or royal purpose.")]
+            }
+        ];
+        const ICON = {}; REGIONS.forEach(r => ICON[r.id] = r.i);
+        const R = id => REGIONS.find(r => r.id === id);
+        const DIFF = { Easy: "Free hints and one wrong choice removed in 4-option questions.", Normal: "Hints cost 5 points. Balanced scoring.", Expert: "No hints, but all points are multiplied by 1.5." };
+
+        /* ===== 4. STATE & PERSISTENCE ===== */
+        const KEY = 'koreaQuest.v1';
+        let S = defState(), P = null, RW = null, scr = 'menu', cur = null, modal = null, focusH = true, AC;
+        function defState() { return { best: {}, mast: {}, art: [], corr: 0, bs: 0, str: 0, snd: false, diff: 'Normal' } }
+        function load() {
+            try {
+                const r = JSON.parse(localStorage.getItem(KEY)); if (!r || typeof r !== 'object') return;
+                REGIONS.forEach(g => { if (Number.isFinite(r.best && r.best[g.id])) S.best[g.id] = r.best[g.id]; if (r.mast && r.mast[g.id] && g.id in S.best) S.mast[g.id] = 1 });
+                if (Array.isArray(r.art)) S.art = r.art.filter(x => R(x)); S.corr = +r.corr || 0; S.bs = +r.bs || 0; S.snd = r.snd === true; if (DIFF[r.diff]) S.diff = r.diff
+            } catch (e) { }
+        }
+        function save() { try { localStorage.setItem(KEY, JSON.stringify(S)) } catch (e) { } }
+        const done = id => id in S.best;
+        const unlocked = id => R(id).req.every(done);
+        const status = id => !unlocked(id) ? 'locked' : S.mast[id] ? 'mastered' : done(id) ? 'completed' : 'available';
+        const total = () => Object.values(S.best).reduce((a, b) => a + b, 0);
+        const pct = () => Math.round(Object.keys(S.best).length / REGIONS.length * 100);
+
+        /* ===== 8. HELPERS: validation, audio, utilities ===== */
+        const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+        const norm = s => String(s).toLowerCase().replace(/[.!'"]/g, '').replace(/\s+/g, ' ').trim();
+        const shuffle = a => { const b = [...a]; for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1));[b[i], b[j]] = [b[j], b[i]] } return b };
+        function clean(c) {
+            if (!c || typeof c.q !== 'string') return null;
+            if (c.t === 'tf') return { ...c, t: 'quiz', o: ['True', 'False'], a: c.a ? 0 : 1 };
+            if (c.t === 'quiz') return Array.isArray(c.o) && c.o.length >= 2 && c.o[c.a] !== undefined ? c : null;
+            if (c.t === 'short') return Array.isArray(c.acc) && c.acc.length ? { ...c, ans: c.acc[0], acc: c.acc.map(norm) } : null;
+            if (c.t === 'match') return Array.isArray(c.p) && c.p.length >= 2 ? c : null;
+            if (c.t === 'order') return Array.isArray(c.items) && c.items.length >= 2 ? c : null; return null
+        }
+        REGIONS.forEach(r => { r.ch = r.ch.map(clean).filter(Boolean) });
+        function snd(k) {
+            if (!S.snd) return; try {
+                AC = AC || new (window.AudioContext || window.webkitAudioContext)();
+                const sq = { click: [[520, .05]], ok: [[660, .1], [880, .15]], bad: [[220, .2]], unlock: [[523, .1], [659, .1], [784, .2]], art: [[784, .1], [988, .1], [1319, .25]], win: [[523, .12], [659, .12], [784, .12], [1047, .3]] }[k];
+                let t = AC.currentTime; sq.forEach(([f, d]) => { const o = AC.createOscillator(), g = AC.createGain(); o.type = 'triangle'; o.frequency.value = f; g.gain.setValueAtTime(.12, t); g.gain.exponentialRampToValueAtTime(.001, t + d); o.connect(g); g.connect(AC.destination); o.start(t); o.stop(t + d); t += d })
+            } catch (e) { }
+        }
+
+        /* ===== 5. RENDERING & NAVIGATION ===== */
+        const nav = () => `<nav class="bar" aria-label="Main"><button data-act="home">🏠 Home</button><button data-act="map">🗺️ Map</button><button data-act="coll">📖 Collection</button><button data-act="set">⚙️ Settings</button></nav>`;
+        const guide = t => `<div class="guide"><span aria-hidden="true">🐯</span><p><b>Hodol the guide:</b> ${esc(t)}</p></div>`;
+        const stats = () => `<div class="stats"><span>⭐ ${total()} pts</span><span>🏆 ${pct()}% complete</span><span>🔥 Streak ${S.str} (best ${S.bs})</span><span>🎚️ ${S.diff}</span></div>`;
+        function show(s, id) { scr = s; if (id) cur = id; focusH = true; snd('click'); render() }
+        function render() {
+            const v = { menu: vMenu, map: vMap, region: vRegion, intro: vIntro, play: vPlay, reward: vReward, coll: vColl, how: vHow, set: vSet }[scr]();
+            $app.innerHTML = v + (modal ? vModal() : '');
+            if (focusH) { const h = $app.querySelector('h1,h2'); if (h) { h.tabIndex = -1; h.focus({ preventScroll: true }) } focusH = false }
+            if (scr === 'play' && P && P.f) { const a = document.getElementById('ans'); if (a) a.focus(); P.f = 0 }
+        }
+        function vMenu() {
+            const has = Object.keys(S.best).length > 0;
+            const fl = Array.from({ length: 6 }, (_, i) => `<span class="petal" style="left:${10 + i * 16}%;animation-delay:${-i * 1.5}s" aria-hidden="true">🌸</span>`).join('');
+            return `${fl}<span class="cloud" style="top:20px" aria-hidden="true">☁️</span><span class="cloud" style="top:90px;animation-delay:-12s" aria-hidden="true">☁️</span>
+ <section class="card center"><h1>🇰🇷 KOREA QUEST</h1><h2>Discover the Soul of Korea</h2><p><b>Explore. Learn. Solve. Collect.</b></p>
+ <svg class="scene" viewBox="0 0 400 130" role="img" aria-label="Illustration of a palace among hills"><rect width="400" height="130" fill="#bfe9ff"/><circle cx="330" cy="30" r="20" fill="#FFD166"/><path d="M0 130V70Q60 30 120 70T240 60T400 70V130Z" fill="#83E6B1"/><path d="M0 130V100Q100 65 200 100T400 95V130Z" fill="#5fd093"/><rect x="170" y="72" width="60" height="28" fill="#FFF8E8" stroke="#24345C" stroke-width="2"/><path d="M158 74L200 46L242 74Z" fill="#3B82F6" stroke="#24345C" stroke-width="2"/><path d="M178 56L200 34L222 56Z" fill="#FF8866" stroke="#24345C" stroke-width="2"/><rect x="192" y="84" width="16" height="16" fill="#24345C"/><g font-size="16"><text x="40" y="100">🌸</text><text x="90" y="112">🌸</text><text x="300" y="108">🌸</text></g></svg>
+ ${has ? `<p>Welcome back! ${Object.keys(S.best).length}/8 destinations · ${total()} points</p>` : ''}
+ <div><button class="pri" data-act="map">${has ? 'Restart? No — Continue Journey' : 'Start Adventure'}</button>${has ? '' : ''}<button data-act="how">❓ How to Play</button><button data-act="coll">📖 Cultural Collection</button><button data-act="set">⚙️ Settings</button></div></section>`
+        }
+        function vMap() {
+            const mk = REGIONS.map(r => {
+                const s = status(r.id), lk = s === 'locked', a = r.x < 200 ? 'end' : 'start', lx = r.x < 200 ? r.x - 22 : r.x + 22;
+                return `<g class="mk ${s}" role="button" tabindex="0" data-act="open" data-id="${r.id}" aria-label="${r.name}, ${r.theme}, ${s}"><title>${r.name} — ${r.theme} (${s})</title><circle cx="${r.x}" cy="${r.y}" r="17" fill="${lk ? '#9aa5b8' : r.c}"/><text class="ic" x="${r.x}" y="${r.y + 6}">${lk ? '🔒' : r.i}</text><text class="lb" x="${lx}" y="${r.y + 5}" text-anchor="${a}">${r.name}</text>${s === 'completed' ? `<text x="${r.x + 10}" y="${r.y - 12}" font-size="14">✅</text>` : s === 'mastered' ? `<text x="${r.x + 10}" y="${r.y - 12}" font-size="14">⭐</text>` : ''}</g>`
+            }).join('');
+            return nav() + `<section class="card"><h2>Korea Map</h2>${stats()}${guide(Object.keys(S.best).length ? 'Pick a glowing marker to keep exploring!' : 'Start in Seoul, the glowing marker. Other places unlock as you go.')}
+ <svg class="map" viewBox="0 0 400 540" role="group" aria-label="Interactive map of South Korea"><path d="M120 30L200 25L260 60L290 130L300 200L320 260L330 330L300 390L250 430L190 450L130 440L90 400L70 340L55 280L70 220L60 160L90 90Z" fill="#FFF8E8" stroke="#24345C" stroke-width="4" stroke-linejoin="round"/><path d="M130 60L190 90L180 150M200 200L240 280L230 360" fill="none" stroke="#83E6B1" stroke-width="14" opacity=".5" stroke-linecap="round"/><ellipse cx="110" cy="500" rx="38" ry="16" fill="#FFF8E8" stroke="#24345C" stroke-width="4"/>${mk}</svg>
+ <p class="hint">🔒 locked · ✅ completed · ⭐ mastered. Use Tab and Enter to select a marker.</p></section>`}
+        function vRegion() {
+            const r = R(cur), s = status(r.id), lk = s === 'locked';
+            return nav() + `<section class="card center" style="--c:${r.c}"><div class="hero" aria-hidden="true">${r.i}</div><h2>${r.name} — ${r.theme}</h2><p>${esc(r.story.split('. ')[0])}.</p>
+ <ul class="meta"><li>🧩 ${r.ch.length} challenges</li><li>🏅 Best score: ${done(r.id) ? S.best[r.id] : '—'}</li><li>Status: ${s}</li></ul>
+ ${lk ? `<p class="lock">🔒 Locked. Complete ${r.req.filter(x => !done(x)).map(x => R(x).name).join(' and ')} to unlock.</p>` : `<button class="pri" data-act="begin">${done(r.id) ? 'Replay & Improve Score' : 'Begin Exploration'}</button>`}<button data-act="map">Back to Map</button></section>`
+        }
+        function vIntro() {
+            const r = R(cur);
+            return `<section class="card" style="--c:${r.c}"><div class="hero" aria-hidden="true">${r.i}</div><h2 class="center">${r.name}: ${r.theme}</h2><p>${esc(r.story)}</p><ul>${r.facts.map(f => `<li>${esc(f)}</li>`).join('')}</ul>${guide('Did you know? ' + r.did)}
+ <div class="center"><button class="pri" data-act="go">Start Challenges</button><button data-act="map">Back to Map</button></div></section>`}
+        const cc = () => R(P.id).ch[P.i];
+        function initCh() {
+            const c = cc(); Object.assign(P, { sel: null, hint: false, done: false, res: null, val: '', g: 0, ml: null, mm: [], mist: 0, msg: '', f: 0 });
+            if (c.t === 'match') P.rt = shuffle([...c.p.keys()]);
+            if (c.t === 'order') { P.pool = shuffle([...c.items.keys()]); P.seq = [] }
+        }
+        function vPlay() {
+            const r = R(P.id), c = cc(), n = r.ch.length, dis = P.done ? 'disabled' : ''; let body = '', can = false;
+            if (c.t === 'quiz') {
+                const hd = c.o.length === 4 && S.diff === 'Easy' ? (c.a === 0 ? 1 : 0) : -1; can = P.sel !== null;
+                body = `<div class="opts">${c.o.map((o, i) => {
+                    let k = 'opt' + (P.sel === i ? ' sel' : ''); if (P.done) { if (i === c.a) k += ' right'; else if (i === P.sel) k += ' wrong' }
+                    return `<button class="${k}" data-act="pick" data-i="${i}" aria-pressed="${P.sel === i}" ${dis || i === hd ? 'disabled' : ''}>${i === hd ? '✕ Removed (Easy)' : esc(o)}</button>`
+                }).join('')}</div>`
+            }
+            if (c.t === 'short') { can = norm(P.val) !== ''; body = `<label for="ans">Your answer:</label><input type="text" id="ans" autocomplete="off" value="${esc(P.val)}" ${dis}>` }
+            if (c.t === 'match') body = `<p class="hint">${esc(P.msg || 'Tap a term, then tap its description.')}</p><div class="mt"><div>${c.p.map((p, i) => `<button class="opt${P.mm.includes(i) ? ' right' : ''}${P.ml === i ? ' sel' : ''}" data-act="ml" data-i="${i}" aria-pressed="${P.ml === i}" ${P.mm.includes(i) || P.done ? 'disabled' : ''}>${esc(p[0])}</button>`).join('')}</div><div>${P.rt.map(i => `<button class="opt${P.mm.includes(i) ? ' right' : ''}" data-act="mr" data-i="${i}" ${P.mm.includes(i) || P.done ? 'disabled' : ''}>${esc(c.p[i][1])}</button>`).join('')}</div></div>`;
+            if (c.t === 'order') { can = P.pool.length === 0; body = `<p>Your order (tap an item to remove it):</p><ol class="seq">${P.seq.map(i => `<li><button class="opt" data-act="orm" data-i="${i}" ${dis}>${esc(c.items[i])}</button></li>`).join('') || '<li class="dim">Tap the items below in order…</li>'}</ol><div class="opts">${P.pool.map(i => `<button class="opt" data-act="osel" data-i="${i}" ${dis}>${esc(c.items[i])}</button>`).join('')}</div>` }
+            const canHint = c.h && !P.done && S.diff !== 'Expert';
+            const fb = P.done ? `<div class="fb ${P.res ? 'ok' : 'no'}" role="status"><b>${P.res ? '✅ Correct! +' + P.g + ' pts' : '💡 Not quite — here is what to learn.'}</b><p>${esc(c.e)}</p>${c.t === 'short' && !P.res ? `<p>Answer: ${esc(c.ans)}</p>` : ''}${c.t === 'order' && !P.res ? `<p>Correct order: ${c.items.map(esc).join(' → ')}</p>` : ''}</div>` : '';
+            return `<section class="card"><p class="hint">${r.i} ${r.name} · Challenge ${P.i + 1} of ${n} · Score ${P.pts}</p><div class="prog" role="progressbar" aria-valuemin="0" aria-valuemax="${n}" aria-valuenow="${P.i + (P.done ? 1 : 0)}"><i style="width:${(P.i + (P.done ? 1 : 0)) / n * 100}%"></i></div>
+ <h2>${esc(c.q)}</h2>${body}${P.hint ? `<p class="hint">💡 Hint: ${esc(c.h)}</p>` : ''}${fb}
+ <div>${!P.done && c.t !== 'match' ? `<button class="pri" data-act="submit" ${can ? '' : 'disabled'}>Submit</button>` : ''}${canHint && !P.hint ? `<button data-act="hint">💡 Hint${S.diff === 'Normal' ? ' (−5 pts)' : ' (free)'}</button>` : ''}${P.done ? `<button class="pri" data-act="next">${P.i + 1 < n ? 'Next Challenge' : 'Finish'}</button>` : ''}<button data-act="leave">Leave to Map</button></div></section>`
+        }
+        function vReward() {
+            const r = R(RW.id), a = r.art, cf = Array.from({ length: 18 }, (_, i) => `<span class="cf" style="left:${Math.random() * 100}%;animation-delay:${Math.random() * 1.5}s" aria-hidden="true">${['⭐', '🌸', '🎉', '✨'][i % 4]}</span>`).join('');
+            return cf + `<section class="card center"><h2>🎉 ${r.name} Complete!</h2><p>Score this run: <b>${RW.score}</b> (includes +20 completion bonus) · ${RW.ok}/${r.ch.length} correct</p>
+ ${RW.mast ? `<p>🏅 <b>${r.name} Master badge${RW.newBadge ? ' earned!' : ' (already earned)'}</b></p>` : '<p>Answer every challenge correctly to earn the Master badge.</p>'}
+ <div class="item" style="max-width:260px;margin:auto"><div class="e">${a[1]}</div><b>${esc(a[0])}</b><small>${esc(a[2])}</small><p>${esc(a[3])}</p>${RW.newArt ? '<b>✨ New artifact!</b>' : '<small>Already in your collection</small>'}</div>
+ ${RW.unl.length ? `<p>🔓 Unlocked: <b>${RW.unl.map(x => R(x).name).join(', ')}</b></p>` : ''}<button class="pri" data-act="map">Continue Exploring</button><button data-act="map">Return to Map</button></section>`
+        }
+        function vColl() {
+            return nav() + `<section class="card"><h2>Cultural Collection</h2>${stats()}<h3>Artifacts (${S.art.length}/${REGIONS.length})</h3><div class="grid">${REGIONS.map(r => S.art.includes(r.id) ? `<div class="item"><div class="e">${r.art[1]}</div><b>${esc(r.art[0])}</b><small>${esc(r.art[2])}</small><p>${esc(r.art[3])}</p></div>` : `<div class="item off"><div class="e">❔</div><b>Locked</b><small>Complete ${r.name} to collect</small></div>`).join('')}</div>
+ <h3>Badges</h3><div class="grid">${REGIONS.map(r => `<div class="item ${S.mast[r.id] ? '' : 'off'}"><div class="e">🏅</div><b>${r.name} Master</b><small>${S.mast[r.id] ? 'Earned' : 'Answer all challenges correctly'}</small></div>`).join('')}</div>
+ <p>✔️ Correct answers: ${S.corr} · Completed: ${Object.keys(S.best).length} · Mastered: ${Object.keys(S.mast).length}</p></section>`
+        }
+        function vHow() { return `<section class="card"><h2>How to Play</h2><ol><li>Choose a destination on the map. Seoul opens first; others unlock as you complete places.</li><li>Read the cultural story, then solve four challenges: quizzes, true-or-false, short answers, matching and ordering.</li><li>Earn 10 points per correct answer, +5 for no hint, a streak bonus, and +20 for finishing a destination.</li><li>Answer everything correctly to earn a Master badge. Replay any place to beat your best score.</li><li>Collect an artifact for each destination.</li></ol><p>No lives, no game over. Mistakes are chances to learn!</p><button class="pri" data-act="home">Back</button></section>` }
+        function vSet() { return nav() + `<section class="card"><h2>Settings</h2><h3>Sound effects</h3><button data-act="snd" aria-pressed="${S.snd}">${S.snd ? '🔊 On' : '🔇 Off'} (tap to toggle)</button><h3>Difficulty</h3>${Object.keys(DIFF).map(d => `<button class="${S.diff === d ? 'pri' : ''}" data-act="diff" data-d="${d}" aria-pressed="${S.diff === d}">${d}</button>`).join('')}<p>${DIFF[S.diff]}</p><h3>Progress</h3><button data-act="resetAsk">🗑️ Reset Progress</button></section>` }
+        function vModal() { return `<div class="modal" role="dialog" aria-modal="true" aria-labelledby="mt"><div class="card"><h2 id="mt">Reset all progress?</h2><p>This permanently erases your points, badges and artifacts.</p><button data-act="resetYes" class="pri">Yes, reset</button><button data-act="close">Cancel</button></div></div>` }
+
+        /* ===== 6/7. PUZZLE MECHANICS, SCORING & PROGRESSION ===== */
+        function fin(ok) {
+            if (P.done) return; P.done = true; P.res = ok; let g = 0;
+            if (ok) { S.str++; S.bs = Math.max(S.bs, S.str); const m = S.diff === 'Expert' ? 1.5 : 1; let b = 10; if (P.hint && S.diff === 'Normal') b -= 5; const bonus = P.hint ? 0 : 5, sb = S.str >= 3 ? Math.min(5, S.str - 2) : 0; g = Math.round((b + bonus + sb) * m); P.good++; snd('ok') } else { S.str = 0; snd('bad') }
+            P.g = g; P.pts += g; render()
+        }
+        function complete() {
+            const r = R(P.id), before = REGIONS.filter(x => unlocked(x.id)).map(x => x.id), score = P.pts + 20, mast = P.good === r.ch.length;
+            S.best[r.id] = Math.max(S.best[r.id] || 0, score); S.corr += P.good; const newBadge = mast && !S.mast[r.id]; if (mast) S.mast[r.id] = 1;
+            const newArt = !S.art.includes(r.id); if (newArt) S.art.push(r.id);
+            const unl = REGIONS.filter(x => unlocked(x.id) && !before.includes(x.id)).map(x => x.id);
+            RW = { id: r.id, score, ok: P.good, mast, newBadge, newArt, unl }; P = null; save(); snd('win'); if (unl.length) setTimeout(() => snd('unlock'), 500); if (newArt) setTimeout(() => snd('art'), 900); show('reward')
+        }
+
+        /* ===== 8. EVENT HANDLING ===== */
+        function act(a, d) {
+            const c = P && scr === 'play' ? cc() : null;
+            switch (a) {
+                case 'home': P = null; return show('menu');
+                case 'map': P = null; return show('map');
+                case 'how': return show('how'); case 'coll': return show('coll'); case 'set': return show('set');
+                case 'open': return show('region', d.id);
+                case 'begin': return show('intro');
+                case 'go': P = { id: cur, i: 0, pts: 0, good: 0 }; initCh(); return show('play');
+                case 'leave': P = null; return show('map');
+                case 'pick': if (!P.done) { P.sel = +d.i; snd('click'); render() } return;
+                case 'hint': P.hint = true; P.f = 1; snd('click'); return render();
+                case 'submit': if (P.done) return;
+                    if (c.t === 'quiz' && P.sel !== null) return fin(P.sel === c.a);
+                    if (c.t === 'short' && norm(P.val)) return fin(c.acc.includes(norm(P.val)));
+                    if (c.t === 'order' && !P.pool.length) return fin(P.seq.every((v, i) => v === i)); return;
+                case 'next': if (!P.done) return; P.i++; if (P.i < R(P.id).ch.length) { initCh(); snd('click'); render() } else complete(); return;
+                case 'ml': if (!P.done && !P.mm.includes(+d.i)) { P.ml = +d.i; P.msg = 'Now tap its description.'; snd('click'); render() } return;
+                case 'mr': if (P.done || P.ml === null || P.mm.includes(+d.i)) return;
+                    if (+d.i === P.ml) { P.mm.push(P.ml); P.ml = null; P.msg = '✓ Match!'; if (P.mm.length === c.p.length) return fin(P.mist === 0); snd('click') } else { P.mist++; P.ml = null; P.msg = '✗ Not a match. Try again!'; snd('bad') }
+                    return render();
+                case 'osel': if (!P.done) { P.pool = P.pool.filter(x => x !== +d.i); P.seq.push(+d.i); snd('click'); render() } return;
+                case 'orm': if (!P.done) { P.seq = P.seq.filter(x => x !== +d.i); P.pool.push(+d.i); render() } return;
+                case 'snd': S.snd = !S.snd; save(); snd('click'); return render();
+                case 'diff': S.diff = d.d; save(); snd('click'); return render();
+                case 'resetAsk': modal = 1; return render();
+                case 'close': modal = null; return render();
+                case 'resetYes': S = defState(); RW = null; P = null; modal = null; try { localStorage.removeItem(KEY) } catch (e) { } return show('menu');
+            }
+        }
+        document.addEventListener('click', e => { const t = e.target.closest('[data-act]'); if (t) act(t.dataset.act, t.dataset) });
+        document.addEventListener('keydown', e => {
+            if ((e.key === 'Enter' || e.key === ' ') && e.target.matches('g[role=button]')) { e.preventDefault(); e.target.dispatchEvent(new MouseEvent('click', { bubbles: true })) }
+            if (e.key === 'Enter' && e.target.id === 'ans' && P) act('submit', {});
+            if (e.key === 'Escape' && modal) act('close', {})
+        });
+        document.addEventListener('input', e => { if (e.target.id === 'ans' && P) { P.val = e.target.value; const b = document.querySelector('[data-act=submit]'); if (b) b.disabled = !norm(P.val) } });
+
+        /* ===== 9. INITIALIZATION ===== */
+        const $app = document.getElementById('app');
+        load(); render();
+    </script>
+</body>
+
+</html>
